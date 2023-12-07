@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
+// Styles
+import "./QrStyles.css";
+
 // Qr Scanner
 import QrScanner from "qr-scanner";
 import QrFrame from "../assets/qr-frame.svg";
@@ -13,24 +16,21 @@ const QrReader = () => {
 
   // Success
   const onScanSuccess = (result: QrScanner.ScanResult) => {
-    // Handle success
-    // if (handleSuccess) {
-    //   handleSuccess(result);
-    // }
+    // 🖨 Print the "result" to browser console.
     console.log(result);
+    // ✅ Handle success.
+    // 😎 You can do whatever you want with the scanned result.
   };
 
   // Fail
   const onScanFail = (err: string | Error) => {
-    // if (err && handleFailure) {
-    //   handleFailure(err);
-    // }
+    // 🖨 Print the "err" to browser console.
     console.log(err);
   };
 
   useEffect(() => {
-    // Instantiate the QR Scanner
     if (videoEl?.current && !scanner.current) {
+      // 👉 Instantiate the QR Scanner
       scanner.current = new QrScanner(videoEl?.current, onScanSuccess, {
         onDecodeError: onScanFail,
         preferredCamera: "environment",
@@ -39,7 +39,7 @@ const QrReader = () => {
         overlay: qrBoxEl?.current || undefined,
       });
 
-      // Start QR Scanner
+      // 🚀 Start QR Scanner
       scanner?.current
         ?.start()
         .then(() => setQrOn(true))
@@ -48,15 +48,22 @@ const QrReader = () => {
         });
     }
 
-    // Clean up on unmount
+    // 🧹 Clean up on unmount.
+    // 🚨 This removes the QR Scanner from rendering and using camera when it is closed or removed from the UI.
     return () => {
-      // eslint-disable-next-line
       if (!videoEl?.current) {
         scanner?.current?.stop();
       }
     };
-    // eslint-disable-next-line
   }, []);
+
+  // ❌ If "camera" is not allowed in browser permissions, show an alert.
+  useEffect(() => {
+    if (!qrOn)
+      alert(
+        "Camera is blocked or not accessible. Please allow camera in your browser permissions and Reload."
+      );
+  }, [qrOn]);
 
   return (
     <div className="qr-reader">
